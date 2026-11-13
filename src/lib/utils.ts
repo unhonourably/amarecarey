@@ -28,20 +28,16 @@ export function formatDate(value: string | Date): string {
 
 export function formatDateCentral(value: string | Date): string {
   const date = typeof value === "string" ? new Date(value) : value;
-  const dateText = new Intl.DateTimeFormat("en-US", {
+  return new Intl.DateTimeFormat("en-US", {
     timeZone: CENTRAL_TIME_ZONE,
     month: "short",
     day: "numeric",
     year: "numeric",
+    hour: "numeric",
+    minute: "2-digit",
+    hour12: true,
+    timeZoneName: "short",
   }).format(date);
-  const zone =
-    new Intl.DateTimeFormat("en-US", {
-      timeZone: CENTRAL_TIME_ZONE,
-      timeZoneName: "short",
-    })
-      .formatToParts(date)
-      .find((part) => part.type === "timeZoneName")?.value ?? "CST";
-  return `${dateText} ${zone}`;
 }
 
 export function formatNoteRecordTimestamps(createdAt: string, updatedAt: string) {
