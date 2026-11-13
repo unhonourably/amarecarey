@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { NoteViewer } from "@/components/notes/NoteViewer";
 import { getPublishedNoteBySlug } from "@/lib/notes/queries";
 import { siteConfig } from "@/config/site";
+import { formatDateCentral, formatNoteRecordTimestamps } from "@/lib/utils";
 
 export const dynamic = "force-dynamic";
 
@@ -41,6 +42,11 @@ export default async function NotePage({ params }: PageProps) {
     notFound();
   }
 
+  const timestamps = formatNoteRecordTimestamps(
+    note.created_at,
+    note.updated_at
+  );
+
   return (
     <main className="min-h-[100dvh] min-h-screen safe-t safe-x safe-b">
       <div className="section-shell pb-4 pt-[max(1rem,env(safe-area-inset-top))] sm:pt-10 sm:pb-6">
@@ -58,6 +64,18 @@ export default async function NotePage({ params }: PageProps) {
           <h1 className="mt-3 font-display text-3xl tracking-tight text-ink-50 sm:mt-4 sm:text-5xl">
             {note.first_name} {note.last_name}
           </h1>
+          <p className="mt-4 flex flex-wrap items-center gap-x-3 gap-y-1 text-[0.7rem] tracking-[0.08em] uppercase text-ink-500">
+            <time dateTime={timestamps.updatedAt}>
+              {timestamps.updatedLabel}{" "}
+              {formatDateCentral(timestamps.updatedAt)}
+            </time>
+            {timestamps.createdAt && timestamps.createdLabel && (
+              <time dateTime={timestamps.createdAt}>
+                {timestamps.createdLabel}{" "}
+                {formatDateCentral(timestamps.createdAt)}
+              </time>
+            )}
+          </p>
           <div className="mt-8 sm:mt-12">
             <NoteViewer content={note.content} />
           </div>
