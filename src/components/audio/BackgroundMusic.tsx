@@ -1,10 +1,14 @@
 "use client";
 
-import { useLayoutEffect, useRef, useState } from "react";
+import { useCallback, useLayoutEffect, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
 import { siteConfig } from "@/config/site";
 
 const STORAGE_KEY = "bgm-volume";
+
+type EarlyBgmWindow = Window & {
+  __BGM_EARLY__?: HTMLAudioElement;
+};
 
 function readStoredVolume(): number {
   if (typeof window === "undefined") {
@@ -17,6 +21,10 @@ function readStoredVolume(): number {
   return Math.min(1, Math.max(0, parsed));
 }
 
+function canStartPlayback(audio: HTMLAudioElement) {
+  return audio.readyState >= HTMLMediaElement.HAVE_FUTURE_DATA;
+}
+
 export function BackgroundMusic() {
   const pathname = usePathname();
   const audioRef = useRef<HTMLAudioElement | null>(null);
@@ -25,17 +33,31 @@ export function BackgroundMusic() {
   const [volume, setVolume] = useState(readStoredVolume);
   const adminRoute = pathname.startsWith("/canes");
 
+  const tryPlay = useCallback(() => {
+    const audio = audioRef.current;
+    if (!audio || adminRoute) return;
+    if (!canStartPlayback(audio)) return;
+    void audio.play().then(() => {
+      unlockedRef.current = true;
+    });
+  }, [adminRoute]);
+
   useLayoutEffect(() => {
     const audio = audioRef.current;
     if (!audio || bootstrappedRef.current) return;
     bootstrappedRef.current = true;
     audio.loop = true;
     audio.volume = volume;
-    audio.load();
-    void audio.play().then(() => {
-      unlockedRef.current = true;
-    });
-  }, []);
+
+    const early = (window as EarlyBgmWindow).__BGM_EARLY__;
+    if (early && early.readyState >= HTMLMediaElement.HAVE_METADATA) {
+      if (early.currentTime > 0) {
+        audio.currentTime = early.currentTime;
+      }
+    }
+
+    tryPlay();
+  }, [tryPlay, volume]);
 
   useLayoutEffect(() => {
     const audio = audioRef.current;
@@ -47,17 +69,11 @@ export function BackgroundMusic() {
     const audio = audioRef.current;
     if (!audio || adminRoute) return;
 
-    const tryPlay = () => {
-      void audio.play().then(() => {
-        unlockedRef.current = true;
-      });
-    };
-
     tryPlay();
     const onInteract = () => tryPlay();
     window.addEventListener("pointerdown", onInteract);
     return () => window.removeEventListener("pointerdown", onInteract);
-  }, [adminRoute]);
+  }, [adminRoute, tryPlay]);
 
   useLayoutEffect(() => {
     const audio = audioRef.current;
@@ -69,16 +85,12 @@ export function BackgroundMusic() {
     }
 
     if (audio.paused && unlockedRef.current) {
-      void audio.play().catch(() => {});
+      tryPlay();
     }
-  }, [adminRoute]);
+  }, [adminRoute, tryPlay]);
 
-  function onCanPlayThrough() {
-    const audio = audioRef.current;
-    if (!audio || adminRoute) return;
-    void audio.play().then(() => {
-      unlockedRef.current = true;
-    });
+  function onBufferReady() {
+    tryPlay();
   }
 
   function onVolumeChange(value: number) {
@@ -99,7 +111,10 @@ export function BackgroundMusic() {
         loop
         playsInline
         autoPlay
-        onCanPlayThrough={onCanPlayThrough}
+        onLoadedMetadata={onBufferReady}
+        onLoadedData={onBufferReady}
+        onCanPlay={onBufferReady}
+        onCanPlayThrough={onBufferReady}
         className="hidden"
       />
       {!adminRoute && (

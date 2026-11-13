@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import type { ReactNode } from "react";
+import Script from "next/script";
 import { Cormorant_Garamond, Figtree } from "next/font/google";
 import { AudioPreload } from "@/components/audio/AudioPreload";
 import { BackgroundMusic } from "@/components/audio/BackgroundMusic";
@@ -45,12 +46,17 @@ export default function RootLayout({
 }: {
   children: ReactNode;
 }) {
+  const audioSrc = siteConfig.audio.src;
+
   return (
     <html lang="en" className={`${display.variable} ${sans.variable}`}>
       <head>
         <AudioPreload />
       </head>
       <body className="safe-x safe-b">
+        <Script id="bgm-early" strategy="beforeInteractive">
+          {`(function(){try{var a=new Audio(${JSON.stringify(audioSrc)});a.preload="auto";a.loop=true;a.load();window.__BGM_EARLY__=a;}catch(e){}})();`}
+        </Script>
         <BackgroundMusic />
         {children}
       </body>
