@@ -2,15 +2,8 @@
 const nextConfig = {
   reactStrictMode: true,
   images: {
-    domains: ['cdn.discordapp.com', 'i.scdn.co', 'last.fm', 'lastfm.freetls.fastly.net'],
+    formats: ["image/avif", "image/webp"],
   },
-  webpack: (config) => {
-    config.resolve.alias = {
-      ...config.resolve.alias,
-      '@': require('path').resolve(__dirname, 'src'),
-    }
-    return config
-  },
-}
+};
 
-module.exports = nextConfig 
+module.exports = nextConfig;

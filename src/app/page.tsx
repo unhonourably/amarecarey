@@ -1,14 +1,11 @@
-'use client'
+import { Hero } from "@/components/sections/Hero";
+import { NoteLookup } from "@/components/notes/NoteLookup";
 
-export default function Home() {
+export default function HomePage() {
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center p-8">
-      <h1 className="text-4xl font-bold mb-4">
-        Welcome
-      </h1>
-      <p className="text-lg text-gray-600">
-        Start building something amazing
-      </p>
+    <main className="flex min-h-[100dvh] min-h-screen flex-col safe-t">
+      <Hero />
+      <NoteLookup />
     </main>
-  )
-} 
+  );
+}
