@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { NoteViewer } from "@/components/notes/NoteViewer";
+import { CommentsSection } from "@/components/comments/CommentsSection";
 import { getPublishedNoteBySlug } from "@/lib/notes/queries";
 import { siteConfig } from "@/config/site";
 import { formatDateCentral, formatNoteRecordTimestamps } from "@/lib/utils";
@@ -48,7 +49,7 @@ export default async function NotePage({ params }: PageProps) {
   );
 
   return (
-    <main className="min-h-[100dvh] min-h-screen safe-t safe-x safe-b">
+    <main className="min-h-[100dvh] min-h-screen overflow-x-hidden safe-t safe-x safe-b pb-[max(4.75rem,env(safe-area-inset-bottom))] sm:pb-10">
       <div className="section-shell pb-4 pt-[max(1rem,env(safe-area-inset-top))] sm:pt-10 sm:pb-6">
         <Link
           href="/#messages"
@@ -61,7 +62,7 @@ export default async function NotePage({ params }: PageProps) {
       <article className="section-shell pb-[max(2rem,env(safe-area-inset-bottom))] pt-4 sm:pb-24 sm:pt-10">
         <div className="mx-auto max-w-reading animate-fade-up">
           <p className="section-label">For</p>
-          <h1 className="mt-3 font-display text-3xl tracking-tight text-ink-50 sm:mt-4 sm:text-5xl">
+          <h1 className="mt-3 break-words font-display text-[1.65rem] leading-tight tracking-tight text-ink-50 sm:mt-4 sm:text-5xl">
             {note.first_name} {note.last_name}
           </h1>
           <p className="mt-4 flex flex-wrap items-center gap-x-3 gap-y-1 text-[0.7rem] tracking-[0.08em] uppercase text-ink-500">
@@ -81,6 +82,7 @@ export default async function NotePage({ params }: PageProps) {
           </div>
         </div>
       </article>
+      <CommentsSection noteId={note.id} slug={note.slug} delay={0.12} />
     </main>
   );
 }

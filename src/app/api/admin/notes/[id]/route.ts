@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import { requireAdminApi } from "@/lib/admin/guard";
 import {
   deleteNote,
@@ -38,6 +39,7 @@ export async function PATCH(request: Request, { params }: Params) {
 
     if (typeof body.published === "boolean" && Object.keys(body).length === 1) {
       const note = await setPublished(params.id, body.published);
+      revalidatePath(`/notes/${note.slug}`);
       return NextResponse.json({ ok: true, note });
     }
 
@@ -52,6 +54,11 @@ export async function PATCH(request: Request, { params }: Params) {
 
     if (!result.ok) {
       return NextResponse.json(result, { status: 409 });
+    }
+
+    revalidatePath(`/notes/${result.note.slug}`);
+    if (result.previousSlug) {
+      revalidatePath(`/notes/${result.previousSlug}`);
     }
 
     return NextResponse.json(result);

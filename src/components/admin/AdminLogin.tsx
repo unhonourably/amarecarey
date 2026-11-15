@@ -58,7 +58,7 @@ export function AdminLogin() {
               value={password}
               onChange={(event) => setPassword(event.target.value)}
               autoComplete="current-password"
-              className="touch-target w-full border border-ink-600 bg-ink-800 px-4 py-3 text-base text-ink-50 sm:text-sm"
+              className="admin-control"
             />
           </label>
 

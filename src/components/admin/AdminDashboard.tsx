@@ -102,28 +102,31 @@ export function AdminDashboard() {
   }
 
   return (
-    <div className="space-y-10">
+    <div className="space-y-8 sm:space-y-10">
       <div className="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
         <div>
           <p className="section-label">Admin</p>
-          <h1 className="mt-3 font-display text-4xl tracking-tight text-ink-50">
+          <h1 className="mt-3 font-display text-3xl tracking-tight text-ink-50 sm:text-4xl">
             Personal notes
           </h1>
           <p className="mt-3 max-w-xl text-sm text-ink-300">
             Create, edit, publish, and manage private messages. This route is intentionally unlisted.
           </p>
         </div>
-        <div className="flex flex-wrap gap-3">
+        <div className="grid w-full grid-cols-2 gap-2 sm:flex sm:w-auto sm:flex-wrap sm:gap-3">
           <button
             type="button"
             onClick={onLogout}
-            className="inline-flex items-center justify-center border border-ink-600 px-4 py-2.5 text-sm text-ink-200 transition-colors hover:border-ink-500 hover:text-ink-50"
+            className="admin-action col-span-1"
           >
             Lock
           </button>
+          <Link href="/canes/messages" className="admin-action col-span-1">
+            Messages
+          </Link>
           <Link
             href="/canes/new"
-            className="inline-flex items-center justify-center border border-ink-50 bg-ink-50 px-4 py-2.5 text-sm text-canvas transition-opacity hover:opacity-90"
+            className="admin-action col-span-2 border-ink-50 bg-ink-50 text-canvas hover:border-ink-50 hover:text-canvas sm:col-span-1"
           >
             Create note
           </Link>
@@ -154,7 +157,9 @@ export function AdminDashboard() {
             value={search}
             onChange={(event) => setSearch(event.target.value)}
             placeholder="Name or slug"
-            className="w-full border border-ink-600 bg-ink-800 px-4 py-3 text-ink-50 placeholder:text-ink-400"
+            enterKeyHint="search"
+            autoComplete="off"
+            className="admin-control"
           />
         </label>
 

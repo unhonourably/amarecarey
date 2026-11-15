@@ -14,15 +14,15 @@ export default async function NewNotePage() {
   await requireAdminPage();
 
   return (
-    <main className="min-h-screen py-12 sm:py-16">
+    <main className="min-h-[100dvh] min-h-screen overflow-x-hidden py-6 safe-x safe-t safe-b sm:py-16">
       <div className="section-shell max-w-3xl">
         <Link
           href="/canes"
-          className="text-sm text-ink-400 transition-colors hover:text-ink-200"
+          className="inline-flex min-h-11 items-center text-sm text-ink-400 transition-colors hover:text-ink-200 active:text-ink-100"
         >
           ← Dashboard
         </Link>
-        <h1 className="mt-6 font-display text-4xl tracking-tight text-ink-50">
+        <h1 className="mt-4 font-display text-3xl tracking-tight text-ink-50 sm:mt-6 sm:text-4xl">
           New note
         </h1>
         <div className="mt-10">

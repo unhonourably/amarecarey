@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import { requireAdminApi } from "@/lib/admin/guard";
 import { createNote } from "@/lib/notes/mutations";
 import { getNoteStats, listNotes } from "@/lib/notes/queries";
@@ -45,6 +46,10 @@ export async function POST(request: Request) {
 
     if (!result.ok) {
       return NextResponse.json(result, { status: 409 });
+    }
+
+    if (result.note.published) {
+      revalidatePath(`/notes/${result.note.slug}`);
     }
 
     return NextResponse.json(result, { status: 201 });

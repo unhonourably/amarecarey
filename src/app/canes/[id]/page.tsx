@@ -34,18 +34,18 @@ export default async function EditNotePage({ params }: PageProps) {
   }
 
   return (
-    <main className="min-h-screen py-12 sm:py-16">
+    <main className="min-h-[100dvh] min-h-screen overflow-x-hidden py-6 safe-x safe-t safe-b sm:py-16">
       <div className="section-shell max-w-3xl">
         <Link
           href="/canes"
-          className="text-sm text-ink-400 transition-colors hover:text-ink-200"
+          className="inline-flex min-h-11 items-center text-sm text-ink-400 transition-colors hover:text-ink-200 active:text-ink-100"
         >
           ← Dashboard
         </Link>
-        <h1 className="mt-6 font-display text-4xl tracking-tight text-ink-50">
+        <h1 className="mt-4 font-display text-3xl tracking-tight text-ink-50 sm:mt-6 sm:text-4xl">
           Edit note
         </h1>
-        <p className="mt-3 text-sm text-ink-400">
+        <p className="mt-3 break-all text-sm text-ink-400">
           {note.first_name} {note.last_name} · /notes/{note.slug}
         </p>
         <div className="mt-10">

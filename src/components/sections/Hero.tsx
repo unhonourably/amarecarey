@@ -6,7 +6,7 @@ export function Hero() {
   const links = siteConfig.socials.filter((link) => Boolean(link.href));
 
   return (
-    <section className="flex flex-1 flex-col items-center justify-center px-5 pb-6 pt-4 sm:px-6 sm:pb-10 sm:pt-8">
+    <section className="flex shrink-0 flex-col items-center justify-center px-5 pb-4 pt-[max(0.75rem,env(safe-area-inset-top))] sm:flex-1 sm:px-6 sm:pb-10 sm:pt-8">
       <Reveal immediate>
         <div className="relative mx-auto h-[9.5rem] w-[7.25rem] sm:h-44 sm:w-32">
           <div className="pfp-orbit pointer-events-none absolute inset-0" aria-hidden>

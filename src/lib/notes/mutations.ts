@@ -34,7 +34,7 @@ function sanitizeInput(input: NoteInput) {
 }
 
 export type CreateNoteResult =
-  | { ok: true; note: PersonalNote }
+  | { ok: true; note: PersonalNote; previousSlug?: string }
   | {
       ok: false;
       conflict: true;
@@ -141,10 +141,16 @@ export async function updateNote(
     };
   }
 
+  const previousSlug = current.slug as string;
+
   const { data, error } = await supabase
     .from("personal_notes")
     .update({
-      ...payload,
+      first_name: payload.first_name,
+      last_name: payload.last_name,
+      slug: payload.slug,
+      content: payload.content,
+      published: payload.published,
       updated_at: new Date().toISOString(),
     })
     .eq("id", id)
@@ -155,7 +161,12 @@ export async function updateNote(
     throw new Error(error.message);
   }
 
-  return { ok: true, note: data as PersonalNote };
+  return {
+    ok: true,
+    note: data as PersonalNote,
+    previousSlug:
+      previousSlug !== (data as PersonalNote).slug ? previousSlug : undefined,
+  };
 }
 
 export async function setPublished(

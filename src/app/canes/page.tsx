@@ -13,7 +13,7 @@ export default async function CanesPage() {
   await requireAdminPage();
 
   return (
-    <main className="min-h-[100dvh] min-h-screen py-8 safe-x safe-t safe-b sm:py-16">
+    <main className="min-h-[100dvh] min-h-screen overflow-x-hidden py-6 safe-x safe-t safe-b sm:py-16">
       <div className="section-shell">
         <AdminDashboard />
       </div>
