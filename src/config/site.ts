@@ -52,6 +52,9 @@ export const siteConfig = {
       "/music/here-with-me.mp3",
     ],
     defaultVolume: 0.16,
+    trackVolumes: {
+      "/music/love-is-in-the-air.mp3": 0.5,
+    },
   },
   status: {
     available: false,

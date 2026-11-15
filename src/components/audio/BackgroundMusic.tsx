@@ -3,23 +3,31 @@
 import { useCallback, useLayoutEffect, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
 import { siteConfig } from "@/config/site";
-import { resolveBgmTrack, stopEarlyBgm } from "@/lib/audio";
+import {
+  defaultVolumeForTrack,
+  resolveBgmTrack,
+  stopEarlyBgm,
+} from "@/lib/audio";
 
 const STORAGE_KEY = "bgm-volume";
 const tracks = siteConfig.audio.tracks;
+
+function volumeStorageKey(track: string) {
+  return `${STORAGE_KEY}:${track}`;
+}
 
 type EarlyBgmWindow = Window & {
   __BGM_EARLY__?: HTMLAudioElement;
 };
 
-function readStoredVolume(): number {
+function readVolumeForTrack(track: string): number {
   if (typeof window === "undefined") {
-    return siteConfig.audio.defaultVolume;
+    return defaultVolumeForTrack(track);
   }
-  const saved = localStorage.getItem(STORAGE_KEY);
-  if (!saved) return siteConfig.audio.defaultVolume;
+  const saved = localStorage.getItem(volumeStorageKey(track));
+  if (!saved) return defaultVolumeForTrack(track);
   const parsed = Number(saved);
-  if (Number.isNaN(parsed)) return siteConfig.audio.defaultVolume;
+  if (Number.isNaN(parsed)) return defaultVolumeForTrack(track);
   return Math.min(1, Math.max(0, parsed));
 }
 
@@ -32,7 +40,7 @@ export function BackgroundMusic() {
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const unlockedRef = useRef(false);
   const bootstrappedRef = useRef(false);
-  const [volume, setVolume] = useState(readStoredVolume);
+  const [volume, setVolume] = useState(siteConfig.audio.defaultVolume);
   const [trackSrc, setTrackSrc] = useState<string | null>(null);
   const adminRoute = pathname.startsWith("/canes");
 
@@ -47,7 +55,9 @@ export function BackgroundMusic() {
   }, [adminRoute, trackSrc]);
 
   useLayoutEffect(() => {
-    setTrackSrc(resolveBgmTrack(tracks));
+    const src = resolveBgmTrack(tracks);
+    setTrackSrc(src);
+    setVolume(readVolumeForTrack(src));
   }, []);
 
   useLayoutEffect(() => {
@@ -109,7 +119,9 @@ export function BackgroundMusic() {
   function onVolumeChange(value: number) {
     const next = Math.min(1, Math.max(0, value));
     setVolume(next);
-    localStorage.setItem(STORAGE_KEY, String(next));
+    if (trackSrc) {
+      localStorage.setItem(volumeStorageKey(trackSrc), String(next));
+    }
     if (audioRef.current) {
       audioRef.current.volume = next;
     }

@@ -1,7 +1,20 @@
+import { siteConfig } from "@/config/site";
+
 type BgmWindow = Window & {
   __BGM_SRC__?: string;
   __BGM_EARLY__?: HTMLAudioElement;
 };
+
+export function defaultVolumeForTrack(track: string): number {
+  const overrides = siteConfig.audio.trackVolumes as
+    | Record<string, number>
+    | undefined;
+  const override = overrides?.[track];
+  if (typeof override === "number") {
+    return Math.min(1, Math.max(0, override));
+  }
+  return siteConfig.audio.defaultVolume;
+}
 
 export function pickUniformIndex(length: number): number {
   if (length <= 0) return 0;
