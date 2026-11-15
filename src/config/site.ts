@@ -39,8 +39,19 @@ export const siteConfig = {
   url: "https://amarecarey.com",
   profileImage: "/images/pfp.png",
   audio: {
-    src: "/music/wildflower.mp3",
-    defaultVolume: 0.32,
+    tracks: [
+      "/music/wildflower.mp3",
+      "/music/death-bed.mp3",
+      "/music/forever.mp3",
+      "/music/love-is-in-the-air.mp3",
+      "/music/thinking-out-loud.mp3",
+      "/music/talking-to-the-moon.mp3",
+      "/music/self-aware.mp3",
+      "/music/end-of-beginning.mp3",
+      "/music/follow-you.mp3",
+      "/music/here-with-me.mp3",
+    ],
+    defaultVolume: 0.16,
   },
   status: {
     available: false,

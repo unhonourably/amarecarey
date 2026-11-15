@@ -3,8 +3,10 @@
 import { useCallback, useLayoutEffect, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
 import { siteConfig } from "@/config/site";
+import { resolveBgmTrack, stopEarlyBgm } from "@/lib/audio";
 
 const STORAGE_KEY = "bgm-volume";
+const tracks = siteConfig.audio.tracks;
 
 type EarlyBgmWindow = Window & {
   __BGM_EARLY__?: HTMLAudioElement;
@@ -31,33 +33,44 @@ export function BackgroundMusic() {
   const unlockedRef = useRef(false);
   const bootstrappedRef = useRef(false);
   const [volume, setVolume] = useState(readStoredVolume);
+  const [trackSrc, setTrackSrc] = useState<string | null>(null);
   const adminRoute = pathname.startsWith("/canes");
 
   const tryPlay = useCallback(() => {
     const audio = audioRef.current;
-    if (!audio || adminRoute) return;
+    if (!audio || adminRoute || !trackSrc) return;
     if (!canStartPlayback(audio)) return;
     void audio.play().then(() => {
       unlockedRef.current = true;
+      stopEarlyBgm();
     });
-  }, [adminRoute]);
+  }, [adminRoute, trackSrc]);
+
+  useLayoutEffect(() => {
+    setTrackSrc(resolveBgmTrack(tracks));
+  }, []);
 
   useLayoutEffect(() => {
     const audio = audioRef.current;
-    if (!audio || bootstrappedRef.current) return;
+    if (!audio || !trackSrc || bootstrappedRef.current) return;
     bootstrappedRef.current = true;
     audio.loop = true;
     audio.volume = volume;
 
     const early = (window as EarlyBgmWindow).__BGM_EARLY__;
     if (early && early.readyState >= HTMLMediaElement.HAVE_METADATA) {
-      if (early.currentTime > 0) {
-        audio.currentTime = early.currentTime;
+      const earlyPath = early.currentSrc
+        ? new URL(early.currentSrc, window.location.origin).pathname
+        : "";
+      if (earlyPath === trackSrc || earlyPath.endsWith(trackSrc)) {
+        if (early.currentTime > 0) {
+          audio.currentTime = early.currentTime;
+        }
       }
     }
 
     tryPlay();
-  }, [tryPlay, volume]);
+  }, [tryPlay, trackSrc, volume]);
 
   useLayoutEffect(() => {
     const audio = audioRef.current;
@@ -67,13 +80,13 @@ export function BackgroundMusic() {
 
   useLayoutEffect(() => {
     const audio = audioRef.current;
-    if (!audio || adminRoute) return;
+    if (!audio || adminRoute || !trackSrc) return;
 
     tryPlay();
     const onInteract = () => tryPlay();
     window.addEventListener("pointerdown", onInteract);
     return () => window.removeEventListener("pointerdown", onInteract);
-  }, [adminRoute, tryPlay]);
+  }, [adminRoute, tryPlay, trackSrc]);
 
   useLayoutEffect(() => {
     const audio = audioRef.current;
@@ -104,19 +117,21 @@ export function BackgroundMusic() {
 
   return (
     <>
-      <audio
-        ref={audioRef}
-        src={siteConfig.audio.src}
-        preload="auto"
-        loop
-        playsInline
-        autoPlay
-        onLoadedMetadata={onBufferReady}
-        onLoadedData={onBufferReady}
-        onCanPlay={onBufferReady}
-        onCanPlayThrough={onBufferReady}
-        className="hidden"
-      />
+      {trackSrc && (
+        <audio
+          ref={audioRef}
+          src={trackSrc}
+          preload="auto"
+          loop
+          playsInline
+          autoPlay
+          onLoadedMetadata={onBufferReady}
+          onLoadedData={onBufferReady}
+          onCanPlay={onBufferReady}
+          onCanPlayThrough={onBufferReady}
+          className="hidden"
+        />
+      )}
       {!adminRoute && (
         <div className="audio-controls fixed z-40 flex items-center gap-2">
           <label className="sr-only" htmlFor="bgm-volume">
