@@ -49,7 +49,7 @@ export default async function NotePage({ params }: PageProps) {
   );
 
   return (
-    <main className="min-h-[100dvh] min-h-screen overflow-x-hidden safe-t safe-x safe-b pb-[max(4.75rem,env(safe-area-inset-bottom))] sm:pb-10">
+    <main className="min-h-[100dvh] min-h-screen overflow-x-hidden safe-t safe-x safe-b pb-[max(5.75rem,env(safe-area-inset-bottom))] sm:pb-10">
       <div className="section-shell pb-4 pt-[max(1rem,env(safe-area-inset-top))] sm:pt-10 sm:pb-6">
         <Link
           href="/#messages"

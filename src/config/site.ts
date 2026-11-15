@@ -55,6 +55,18 @@ export const siteConfig = {
     trackVolumes: {
       "/music/love-is-in-the-air.mp3": 0.5,
     },
+    trackTitles: {
+      "/music/wildflower.mp3": "Wildflower",
+      "/music/death-bed.mp3": "Death Bed",
+      "/music/forever.mp3": "Forever",
+      "/music/love-is-in-the-air.mp3": "Love Is in the Air",
+      "/music/thinking-out-loud.mp3": "Thinking Out Loud",
+      "/music/talking-to-the-moon.mp3": "Talking to the Moon",
+      "/music/self-aware.mp3": "Self Aware",
+      "/music/end-of-beginning.mp3": "End of Beginning",
+      "/music/follow-you.mp3": "Follow You",
+      "/music/here-with-me.mp3": "Here With Me",
+    },
   },
   status: {
     available: false,

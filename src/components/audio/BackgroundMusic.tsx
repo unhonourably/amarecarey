@@ -9,6 +9,7 @@ import {
   resolveBgmTrack,
   setResolvedBgmTrack,
   stopEarlyBgm,
+  titleForTrack,
 } from "@/lib/audio";
 
 const STORAGE_KEY = "bgm-volume";
@@ -164,8 +165,15 @@ export function BackgroundMusic() {
           className="hidden"
         />
       )}
-      {!adminRoute && (
-        <div className="audio-controls fixed z-40 flex items-center gap-2">
+      {!adminRoute && trackSrc && (
+        <div className="audio-controls fixed z-40 flex">
+          <p
+            className="audio-now-playing"
+            title={titleForTrack(trackSrc)}
+            aria-live="polite"
+          >
+            {titleForTrack(trackSrc)}
+          </p>
           <label className="sr-only" htmlFor="bgm-volume">
             Background volume
           </label>
@@ -177,7 +185,7 @@ export function BackgroundMusic() {
             step={0.01}
             value={volume}
             onChange={(event) => onVolumeChange(Number(event.target.value))}
-            className="bgm-slider w-[5.5rem] sm:w-[6.5rem]"
+            className="bgm-slider w-[min(6.75rem,34vw)] shrink-0 sm:w-[6.5rem]"
             aria-valuemin={0}
             aria-valuemax={100}
             aria-valuenow={Math.round(volume * 100)}

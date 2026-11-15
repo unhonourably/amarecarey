@@ -5,6 +5,16 @@ type BgmWindow = Window & {
   __BGM_EARLY__?: HTMLAudioElement;
 };
 
+export function titleForTrack(track: string): string {
+  const titles = siteConfig.audio.trackTitles as
+    | Record<string, string>
+    | undefined;
+  const title = titles?.[track];
+  if (title) return title;
+  const slug = track.split("/").pop()?.replace(/\.mp3$/i, "") ?? "";
+  return slug.replace(/-/g, " ").replace(/\b\w/g, (char) => char.toUpperCase());
+}
+
 export function defaultVolumeForTrack(track: string): number {
   const overrides = siteConfig.audio.trackVolumes as
     | Record<string, number>
