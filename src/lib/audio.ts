@@ -37,6 +37,22 @@ export function pickUniformTrack(tracks: readonly string[]): string {
   return tracks[pickUniformIndex(tracks.length)];
 }
 
+export function pickUniformTrackExcluding(
+  tracks: readonly string[],
+  exclude: string
+): string {
+  const pool = tracks.filter((track) => track !== exclude);
+  if (pool.length === 0) {
+    return tracks[0] ?? "";
+  }
+  return pickUniformTrack(pool);
+}
+
+export function setResolvedBgmTrack(track: string) {
+  if (typeof window === "undefined") return;
+  (window as BgmWindow).__BGM_SRC__ = track;
+}
+
 export function resolveBgmTrack(tracks: readonly string[]): string {
   if (tracks.length === 0) return "";
   if (tracks.length === 1) return tracks[0];

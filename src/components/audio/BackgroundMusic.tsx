@@ -5,7 +5,9 @@ import { usePathname } from "next/navigation";
 import { siteConfig } from "@/config/site";
 import {
   defaultVolumeForTrack,
+  pickUniformTrackExcluding,
   resolveBgmTrack,
+  setResolvedBgmTrack,
   stopEarlyBgm,
 } from "@/lib/audio";
 
@@ -39,7 +41,7 @@ export function BackgroundMusic() {
   const pathname = usePathname();
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const unlockedRef = useRef(false);
-  const bootstrappedRef = useRef(false);
+  const previousTrackRef = useRef<string | null>(null);
   const [volume, setVolume] = useState(siteConfig.audio.defaultVolume);
   const [trackSrc, setTrackSrc] = useState<string | null>(null);
   const adminRoute = pathname.startsWith("/canes");
@@ -54,6 +56,15 @@ export function BackgroundMusic() {
     });
   }, [adminRoute, trackSrc]);
 
+  const onTrackEnded = useCallback(() => {
+    if (adminRoute || !trackSrc || tracks.length <= 1) return;
+    const next = pickUniformTrackExcluding(tracks, trackSrc);
+    if (!next) return;
+    setResolvedBgmTrack(next);
+    setVolume(readVolumeForTrack(next));
+    setTrackSrc(next);
+  }, [adminRoute, trackSrc]);
+
   useLayoutEffect(() => {
     const src = resolveBgmTrack(tracks);
     setTrackSrc(src);
@@ -62,29 +73,38 @@ export function BackgroundMusic() {
 
   useLayoutEffect(() => {
     const audio = audioRef.current;
-    if (!audio || !trackSrc || bootstrappedRef.current) return;
-    bootstrappedRef.current = true;
-    audio.loop = true;
+    if (!audio || !trackSrc) return;
+    audio.loop = false;
     audio.volume = volume;
 
-    const early = (window as EarlyBgmWindow).__BGM_EARLY__;
-    if (early && early.readyState >= HTMLMediaElement.HAVE_METADATA) {
-      const earlyPath = early.currentSrc
-        ? new URL(early.currentSrc, window.location.origin).pathname
-        : "";
-      if (earlyPath === trackSrc || earlyPath.endsWith(trackSrc)) {
-        if (early.currentTime > 0) {
-          audio.currentTime = early.currentTime;
+    const prev = previousTrackRef.current;
+    previousTrackRef.current = trackSrc;
+
+    if (prev === null) {
+      const early = (window as EarlyBgmWindow).__BGM_EARLY__;
+      if (early && early.readyState >= HTMLMediaElement.HAVE_METADATA) {
+        const earlyPath = early.currentSrc
+          ? new URL(early.currentSrc, window.location.origin).pathname
+          : "";
+        if (earlyPath === trackSrc || earlyPath.endsWith(trackSrc)) {
+          if (early.currentTime > 0) {
+            audio.currentTime = early.currentTime;
+          }
         }
       }
+      tryPlay();
+      return;
     }
 
-    tryPlay();
+    if (prev !== trackSrc) {
+      audio.currentTime = 0;
+      tryPlay();
+    }
   }, [tryPlay, trackSrc, volume]);
 
   useLayoutEffect(() => {
     const audio = audioRef.current;
-    if (!audio || !bootstrappedRef.current) return;
+    if (!audio || previousTrackRef.current === null) return;
     audio.volume = volume;
   }, [volume]);
 
@@ -134,9 +154,9 @@ export function BackgroundMusic() {
           ref={audioRef}
           src={trackSrc}
           preload="auto"
-          loop
           playsInline
           autoPlay
+          onEnded={onTrackEnded}
           onLoadedMetadata={onBufferReady}
           onLoadedData={onBufferReady}
           onCanPlay={onBufferReady}
