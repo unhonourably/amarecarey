@@ -26,6 +26,38 @@ export function formatDate(value: string | Date): string {
   }).format(date);
 }
 
+export function formatLiveClockCentral(date: Date): string {
+  const { time, dateLine, tz } = getCentralClockParts(date);
+  return `${time} · ${dateLine} · ${tz}`;
+}
+
+export function getCentralClockParts(date: Date) {
+  const time = new Intl.DateTimeFormat("en-US", {
+    timeZone: CENTRAL_TIME_ZONE,
+    hour: "numeric",
+    minute: "2-digit",
+    second: "2-digit",
+    hour12: true,
+  }).format(date);
+
+  const dateLine = new Intl.DateTimeFormat("en-US", {
+    timeZone: CENTRAL_TIME_ZONE,
+    weekday: "short",
+    month: "short",
+    day: "numeric",
+  }).format(date);
+
+  const tz =
+    new Intl.DateTimeFormat("en-US", {
+      timeZone: CENTRAL_TIME_ZONE,
+      timeZoneName: "short",
+    })
+      .formatToParts(date)
+      .find((part) => part.type === "timeZoneName")?.value ?? "CT";
+
+  return { time, dateLine, tz };
+}
+
 export function formatDateCentral(value: string | Date): string {
   const date = typeof value === "string" ? new Date(value) : value;
   return new Intl.DateTimeFormat("en-US", {

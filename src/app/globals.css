@@ -214,6 +214,10 @@
     @apply inline-flex min-h-11 items-center justify-center border border-ink-600 px-4 py-2.5 text-sm text-ink-200 transition-colors hover:border-ink-500 hover:text-ink-50 active:text-ink-100 touch-manipulation disabled:opacity-50;
   }
 
+  .public-form {
+    @apply w-full max-w-none touch-manipulation;
+  }
+
   .toolbar-scroll {
     -webkit-overflow-scrolling: touch;
     scrollbar-width: none;

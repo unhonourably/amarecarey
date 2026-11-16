@@ -56,7 +56,7 @@ export function NoteLookup() {
   }
 
   return (
-    <section id="messages" className="px-5 pb-4 pt-2 sm:px-6 sm:pb-20 sm:pt-4">
+    <section id="messages" className="px-5 pb-1 pt-2 sm:px-6 sm:pb-2 sm:pt-4">
       <Reveal immediate delay={0.26}>
         <form
           onSubmit={onSubmit}

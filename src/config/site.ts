@@ -50,6 +50,8 @@ export const siteConfig = {
       "/music/end-of-beginning.mp3",
       "/music/follow-you.mp3",
       "/music/here-with-me.mp3",
+      "/music/id-rather-pretend.mp3",
+      "/music/if-i-am-with-you.mp3",
     ],
     defaultVolume: 0.16,
     trackVolumes: {
@@ -66,6 +68,8 @@ export const siteConfig = {
       "/music/end-of-beginning.mp3": "End of Beginning",
       "/music/follow-you.mp3": "Follow You",
       "/music/here-with-me.mp3": "Here With Me",
+      "/music/id-rather-pretend.mp3": "I'd Rather Pretend",
+      "/music/if-i-am-with-you.mp3": "If I Am With You",
     },
   },
   status: {

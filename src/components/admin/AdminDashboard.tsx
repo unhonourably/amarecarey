@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { AdminSiteStats } from "@/components/admin/AdminSiteStats";
 import { NotesList } from "@/components/admin/NotesList";
 import type { NoteStats, PersonalNoteSummary } from "@/lib/notes/types";
 
@@ -124,6 +125,12 @@ export function AdminDashboard() {
           <Link href="/canes/messages" className="admin-action col-span-1">
             Messages
           </Link>
+          <Link href="/canes/guestbook" className="admin-action col-span-1">
+            Guestbook
+          </Link>
+          <Link href="/canes/ask" className="admin-action col-span-1">
+            AMA
+          </Link>
           <Link
             href="/canes/new"
             className="admin-action col-span-2 border-ink-50 bg-ink-50 text-canvas hover:border-ink-50 hover:text-canvas sm:col-span-1"
@@ -132,6 +139,8 @@ export function AdminDashboard() {
           </Link>
         </div>
       </div>
+
+      <AdminSiteStats />
 
       <div className="grid gap-4 sm:grid-cols-3">
         {[
