@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import type { GuestbookEntry } from "@/lib/guestbook/types";
+import { guestbookDisplayName } from "@/lib/guestbook/display";
 import { formatDateCentral } from "@/lib/utils";
 
 export function AdminGuestbook() {
@@ -90,7 +91,7 @@ export function AdminGuestbook() {
               <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
                 <div className="min-w-0 flex-1">
                   <p className="font-display text-lg text-ink-50">
-                    {entry.is_anonymous ? "Anonymous" : entry.signature}
+                    {guestbookDisplayName(entry)}
                   </p>
                   <time
                     dateTime={entry.created_at}

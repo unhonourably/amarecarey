@@ -12,6 +12,7 @@ create table if not exists public.guestbook_entries (
   signature text not null default '',
   body text not null default '',
   is_anonymous boolean not null default false,
+  anonymous_number integer,
   created_at timestamptz not null default now(),
   constraint guestbook_signature_or_anonymous check (
     is_anonymous = true or length(trim(signature)) > 0

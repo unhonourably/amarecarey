@@ -3,6 +3,7 @@ export type GuestbookEntry = {
   signature: string;
   body: string;
   is_anonymous: boolean;
+  anonymous_number: number | null;
   created_at: string;
 };
 

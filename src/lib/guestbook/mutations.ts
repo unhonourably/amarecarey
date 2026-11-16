@@ -26,9 +26,31 @@ export async function createGuestbookEntry(
   }
 
   const supabase = createServiceClient();
+  let anonymous_number: number | null = null;
+
+  if (anonymous) {
+    const { data: maxRow, error: maxError } = await supabase
+      .from("guestbook_entries")
+      .select("anonymous_number")
+      .eq("is_anonymous", true)
+      .order("anonymous_number", { ascending: false })
+      .limit(1)
+      .maybeSingle();
+
+    if (maxError) {
+      throw new Error(maxError.message);
+    }
+
+    const currentMax =
+      typeof maxRow?.anonymous_number === "number"
+        ? maxRow.anonymous_number
+        : 0;
+    anonymous_number = currentMax + 1;
+  }
+
   const { data, error } = await supabase
     .from("guestbook_entries")
-    .insert({ signature, body, is_anonymous: anonymous })
+    .insert({ signature, body, is_anonymous: anonymous, anonymous_number })
     .select("*")
     .single();
 
