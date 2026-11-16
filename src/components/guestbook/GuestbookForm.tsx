@@ -85,7 +85,7 @@ export function GuestbookForm() {
       <div aria-live="polite" className="min-h-[1rem]">
         {error && <p className="text-center text-sm text-red-300/90">{error}</p>}
         {success && !error && (
-          <p className="text-center text-sm text-ink-400">You're on the wall.</p>
+          <p className="text-center text-sm text-ink-400">You&apos;re on the wall.</p>
         )}
       </div>
     </form>
