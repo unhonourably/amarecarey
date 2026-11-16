@@ -9,10 +9,13 @@ create index if not exists site_visitors_last_seen_idx
 
 create table if not exists public.guestbook_entries (
   id uuid primary key default gen_random_uuid(),
-  signature text not null,
-  body text not null,
+  signature text not null default '',
+  body text not null default '',
+  is_anonymous boolean not null default false,
   created_at timestamptz not null default now(),
-  constraint guestbook_signature_not_blank check (length(trim(signature)) > 0)
+  constraint guestbook_signature_or_anonymous check (
+    is_anonymous = true or length(trim(signature)) > 0
+  )
 );
 
 create index if not exists guestbook_entries_created_at_idx

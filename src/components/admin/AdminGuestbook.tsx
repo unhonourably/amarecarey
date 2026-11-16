@@ -90,7 +90,7 @@ export function AdminGuestbook() {
               <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
                 <div className="min-w-0 flex-1">
                   <p className="font-display text-lg text-ink-50">
-                    {entry.signature}
+                    {entry.is_anonymous ? "Anonymous" : entry.signature}
                   </p>
                   <time
                     dateTime={entry.created_at}

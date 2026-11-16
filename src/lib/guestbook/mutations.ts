@@ -7,14 +7,19 @@ const MAX_SIGNATURE = 80;
 export async function createGuestbookEntry(
   input: GuestbookInput
 ): Promise<GuestbookEntry> {
-  const signature = input.signature.trim();
+  const anonymous = Boolean(input.anonymous);
   const body = input.body.trim();
+  let signature = input.signature.trim();
 
-  if (!signature) {
-    throw new Error("Signature is required.");
-  }
-  if (signature.length > MAX_SIGNATURE) {
-    throw new Error("Signature is too long.");
+  if (!anonymous) {
+    if (!signature) {
+      throw new Error("Signature is required unless you stay anonymous.");
+    }
+    if (signature.length > MAX_SIGNATURE) {
+      throw new Error("Signature is too long.");
+    }
+  } else {
+    signature = "";
   }
   if (body.length > MAX_BODY) {
     throw new Error("Message is too long.");
@@ -23,7 +28,7 @@ export async function createGuestbookEntry(
   const supabase = createServiceClient();
   const { data, error } = await supabase
     .from("guestbook_entries")
-    .insert({ signature, body })
+    .insert({ signature, body, is_anonymous: anonymous })
     .select("*")
     .single();
 

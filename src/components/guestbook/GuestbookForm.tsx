@@ -7,6 +7,7 @@ import { cn } from "@/lib/utils";
 export function GuestbookForm() {
   const router = useRouter();
   const [signature, setSignature] = useState("");
+  const [anonymous, setAnonymous] = useState(false);
   const [body, setBody] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -22,7 +23,7 @@ export function GuestbookForm() {
       const response = await fetch("/api/guestbook", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ signature, body }),
+        body: JSON.stringify({ signature, body, anonymous }),
       });
 
       const data = await response.json();
@@ -33,6 +34,7 @@ export function GuestbookForm() {
       }
 
       setSignature("");
+      setAnonymous(false);
       setBody("");
       setSuccess(true);
       router.refresh();
@@ -48,18 +50,31 @@ export function GuestbookForm() {
       onSubmit={onSubmit}
       className="public-form space-y-5 border border-ink-600 p-4 sm:p-6"
     >
-      <label className="block">
-        <span className="mb-2 block text-[0.65rem] tracking-[0.14em] uppercase text-ink-500">
-          Signature (name)
-        </span>
+      <label className="flex min-h-11 cursor-pointer items-center gap-3 py-1 text-[0.68rem] tracking-[0.12em] uppercase text-ink-500 touch-manipulation">
         <input
-          value={signature}
-          onChange={(event) => setSignature(event.target.value)}
-          maxLength={80}
-          autoComplete="name"
-          className="admin-control"
+          type="checkbox"
+          checked={anonymous}
+          onChange={(event) => setAnonymous(event.target.checked)}
+          className="h-5 w-5 shrink-0 accent-white"
         />
+        Stay anonymous
       </label>
+
+      {!anonymous && (
+        <label className="block">
+          <span className="mb-2 block text-[0.65rem] tracking-[0.14em] uppercase text-ink-500">
+            Signature (name)
+          </span>
+          <input
+            value={signature}
+            onChange={(event) => setSignature(event.target.value)}
+            maxLength={80}
+            autoComplete="name"
+            className="admin-control"
+          />
+        </label>
+      )}
+
       <label className="block">
         <span className="mb-2 block text-[0.65rem] tracking-[0.14em] uppercase text-ink-500">
           Message (optional)

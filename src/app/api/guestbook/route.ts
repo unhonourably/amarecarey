@@ -20,10 +20,12 @@ export async function POST(request: Request) {
     const signature =
       typeof body.signature === "string" ? body.signature : "";
     const message = typeof body.body === "string" ? body.body : "";
+    const anonymous = Boolean(body.anonymous);
 
     const entry = await createGuestbookEntry({
       signature,
       body: message,
+      anonymous,
     });
 
     revalidatePath("/guestbook");

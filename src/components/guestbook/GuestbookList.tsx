@@ -20,7 +20,7 @@ export function GuestbookList({ entries }: GuestbookListProps) {
         <li key={entry.id} className="px-4 py-5 sm:px-6">
           <div className="flex flex-col gap-2 sm:flex-row sm:items-baseline sm:justify-between">
             <p className="font-display text-lg tracking-tight text-ink-50">
-              {entry.signature}
+              {entry.is_anonymous ? "Anonymous" : entry.signature}
             </p>
             <time
               dateTime={entry.created_at}
