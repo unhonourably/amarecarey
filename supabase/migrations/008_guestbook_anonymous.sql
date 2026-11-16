@@ -5,6 +5,9 @@ alter table public.guestbook_entries
   drop constraint if exists guestbook_signature_not_blank;
 
 alter table public.guestbook_entries
+  drop constraint if exists guestbook_signature_or_anonymous;
+
+alter table public.guestbook_entries
   add constraint guestbook_signature_or_anonymous check (
     is_anonymous = true or length(trim(signature)) > 0
   );
